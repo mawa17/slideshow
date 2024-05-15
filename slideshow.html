@@ -1,0 +1,97 @@
+<!--#region Config-->
+<script>
+    const WidthPercent = 100;
+    const HeightPercent = 100;
+    const XOffset = 0;
+    const YOffset = 0;
+    const DocumentTitle = "Image Slideshow";
+    const ImageDisplayMS = 5000;
+    const Images = [
+    "1.jpg",
+    "2.jpg",
+    ];
+</script>
+<!--#endregion-->
+<!--#region Script Logic-->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.title = DocumentTitle;
+        let container = document.querySelector('#container');
+
+        /*Dynamic location movement of container*/
+        container.style.position = 'absolute';
+        container.style.width = WidthPercent + '%';
+        container.style.height = HeightPercent + '%';
+        container.style.left = XOffset + 'px';
+        container.style.top = YOffset + 'px';
+
+        Images.forEach(function(imagePath, index) {
+            let img = document.createElement('img');
+            img.src = imagePath;
+            img.style.zIndex = -1;
+            container.appendChild(img);
+            if (index === 0) {
+                img.classList.add('active');
+            }
+
+            /*Auto adjustment of image rotation*/
+            img.onload = function() {
+                if (img.height > img.width) {
+                    img.style.height = '100%';
+                    img.style.width = 'auto';
+                } else {
+                    img.style.height = 'auto';
+                    img.style.width = '100%';
+                }
+            };
+        });
+
+        let currentIndex = 0;
+        setInterval(() => {
+            const imgs = container.querySelectorAll('img');
+            const nextIndex = (currentIndex + 1) % imgs.length;
+            imgs[currentIndex].classList.remove('active');
+            imgs[nextIndex].classList.add('active');
+            currentIndex = nextIndex;
+        }, ImageDisplayMS);
+    });
+</script>
+<!--#endregion-->
+<!--#region Html-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <div id="container"></div>
+</body>
+</html>
+<!--#endregion-->
+<!--#region CSS Style-->
+<style>
+    html, body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+    }
+
+    #container img {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        transition: opacity 1s ease-in-out;
+        opacity: 0;
+        display: block;
+        margin: auto;
+    }
+
+    #container img.active {
+        opacity: 1;
+    }
+</style>
+<!--#endregion-->
